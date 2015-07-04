@@ -178,7 +178,7 @@ A char can have at most one drawing element, representing the way to draw the ch
 A char can have at most one sound element, representing the sound of the character, related to a file (by id or ref).
 A char can have a list of its component radical characters (radicals element).
 
-##Conjugation,Mode,Time,Sentence,Persons
+##Conjugation,Mode,Time,Sentence,Person objects
 Conjugations are included into translation elements of definition of type "verb"
 
           <definition type="verb">
