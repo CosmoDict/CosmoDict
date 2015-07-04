@@ -95,7 +95,7 @@ Is a common meaning where all translations are related to.
 
 A definition must have a UNIQUE numeric id (by sequence), and be referenced with the attribute ref="#id"
 
-##Translation and Gender
+##Translation
 Translations are included into definitions, only one translation per language.
 
 A translation must have a UNIQUE numeric id (by sequence), and be referenced with the attribute ref="#id".
@@ -106,7 +106,7 @@ There must be at most one synonym per language (the same as translation).
         <term txt="time" priority="3">
           <definition type="noun" id="81">
             <value>period era</value>
-            <translation lang="de" id="675">
+            <translation lang="de" id="675" sp="s">
               <gender id="m" >der</gender>
               <gender id="f" priority="1">die</gender>
               <value>Zeit</value>
@@ -117,9 +117,13 @@ There must be at most one synonym per language (the same as translation).
           </definition>
         </term>
 
+###Gender and singular or plural (sp)
+
 Genders are included into translations, the gender with priority 1 is used as the most common in case of ambiguity.
 
 A gender is composed of the text that is added to the word, and an id to indicate (m=masculine,f=feminine,n=neutral), and a name (the description of the id, optional).
+
+The attribute sp is used to give the singular or plural value: (s=singular,p=plural)
 
 ###Syllables, Chars, Pronunciation, Transliteration
 
@@ -175,10 +179,12 @@ A phrase is a definition of type="phrase" related to a null term (withouth txt)
           </definition>
         </term>
 
-#Ids.
+#Ids
 
 Term, definition and translation ids are independent but must have no duplicates.
 The user must verify the correctness of the data and references.
+
+Probably other objects like images,sounds, modes,times, persons uses id, catalogs (like those for types,languages) and sequences. If so the appropriate elements are created.
 
 ##Sequences
 While more ids are used, its values increase with a sequence, the user can change the sequence and use the new ids in the newly added objects and references.
@@ -192,6 +198,7 @@ While more ids are used, its values increase with a sequence, the user can chang
         </dictionary>
 
 The developer should provide a program to verify the data before committing changes to repository.
+
 
 ##Xml schema file and verification
 
