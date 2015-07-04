@@ -67,11 +67,12 @@ type elements are included into the types element of dictionary.
 ##Language(s)
 
 Include the supported languages identified by its ISO 693-1 code.
+The content of each lang element is the language name written in the original language.
 
         <dictionary>
           <languages>
             <lang id="en" name="English"/>
-            <lang id="ru" name="Russian" original="Русский язык" />
+            <lang id="ru" name="Russian">Русский язык</lang>
           </languages>
         </dictionary>
 
