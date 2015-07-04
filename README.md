@@ -41,9 +41,11 @@ A term is a text written in english (case insensitive written with chars [a-z][0
 
         <dictionary>
           <terms>
-            <term txt="be" priority="3">...</term>
+            <term id="3" txt="be" priority="3">...</term>
           </terms>
         </dictionary>
+
+A term must have a UNIQUE numeric id (by sequence).
 
 ##Types
 type elements are included into the types element of dictionary.
@@ -59,7 +61,7 @@ type elements are included into the types element of dictionary.
             <type id="pnoun" name="pronoun"/>
             <type id="num" name="numeral"/>
             <type id="prop" name="proper name"/>
-            <type id="phrase" />
+            <type id="phrase"/>
             <type id="null"/>
           </types>
         </dictionary>
@@ -82,29 +84,36 @@ Definitions are included into terms, only one definition per meaning.
 Is a common meaning where all translations are related to.
 
         <term txt="work" priority="3">
-          <definition type="verb">
+          <definition type="verb" id="75">
             <value>to work</value>
             <image base64="true">binary base64 encoded text</image>
           </definition>
-          <definition type="noun">
+          <definition type="noun" id="76">
             <value>the work</value>
           </definition>  
         </term>
 
+A definition must have a UNIQUE numeric id (by sequence), and be referenced with the attribute ref="#id"
+
 ##Translation and Gender
-Translations are included into definitions, only one translation per langage.
+Translations are included into definitions, only one translation per language.
+
+A translation must have a UNIQUE numeric id (by sequence), and be referenced with the attribute ref="#id".
+
+A referenced translation is a synonym.
+There must be at most one synonym per language (the same as translation).
 
         <term txt="time" priority="3">
-          <definition type="noun">
+          <definition type="noun" id="81">
             <value>period era</value>
-            <translation lang="de">
+            <translation lang="de" id="675">
               <gender id="m" >der</gender>
               <gender id="f" priority="1">die</gender>
               <value>Zeit</value>
               <sound base64="true">binary base64 encoded text</sound>
             </translation>
+            <translation ref="123" />
             ...
-            <translation...>...</translation>
           </definition>
         </term>
 
@@ -159,12 +168,30 @@ Conjugations are included into translation elements of definition of type "verb"
           </definition>
 	
 ##Phrase(s)
-A phrase is a definition of type="phrase" related to the null term (withouth txt)
+A phrase is a definition of type="phrase" related to a null term (withouth txt)
 
-        <term priority="3">
+        <term priority="3" id="132">
           <definition type="phrase">
           </definition>
         </term>
+
+#Ids.
+
+Term, definition and translation ids are independent but must have no duplicates.
+The user must verify the correctness of the data and references.
+
+##Sequences
+While more ids are used, its values increase with a sequence, the user can change the sequence and use the new ids in the newly added objects and references.
+
+        <dictionary>
+		<sequences>
+			<term value="123" />
+			<definition value="23" />
+			<translation value="84" />
+		</sequences>
+        </dictionary>
+
+The developer should provide a program to verify the data before committing changes to repository.
 
 ##Xml schema file and verification
 
