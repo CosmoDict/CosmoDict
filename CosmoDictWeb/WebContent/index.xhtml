@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3c.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link type="text/css" rel="stylesheet" href="css/index.css" />
+</h:head>
+
+<h:body>
+    <h3>CosmoDict</h3>
+    <center>
+        <div>
+            <h:form id="msgForm">
+                <p:messages id="messages" showDetail="true" autoUpdate="true" />
+            </h:form>
+        </div>
+    </center>
+    <p:tabView id="mytabs" widgetVar="mytabs">
+        <p:tab title="Tokens">
+
+            <h:form id="searchTokenForm">
+                <p:panelGrid columns="2" id="tokenPanel">
+                    <h:outputText value="Id" style="width: 300px;" />
+                    <p:inputText id="tokenIdField" value="#{manager.tokenSearch.tokenId}" style="width: 300px;" />
+                    <h:outputText value="Token" style="width: 300px;" />
+                    <p:inputText id="tokenValueField" value="#{manager.tokenSearch.value}" style="width: 300px;" />
+                    <h:outputText value="" style="width: 300px;" />
+                    <p:panel style="border-width: 0px;">
+                        <p:commandLink action="#{manager.searchTokens}" style="margin: 5px;"
+                            update=":mytabs:tokensGridForm">
+                            <h:graphicImage value="images/search.png" width="22" height="22" />
+                        </p:commandLink>
+                        <p:commandButton oncomplete="PF('tokenDialog').show()" update=":mytabs:tokenDialogForm"
+                            value="New" style="margin: 5px;">
+                            <f:setPropertyActionListener target="#{manager.tokenEdit}" value="#{null}" />
+                        </p:commandButton>
+                        <p:commandButton value="Reset" style="margin: 5px;" update="@form:tokenPanel">
+                            <f:setPropertyActionListener target="#{manager.tokenSearch}" value="#{null}" />
+                        </p:commandButton>
+                    </p:panel>
+                </p:panelGrid>
+            </h:form>
+
+            <h:form id="tokenDialogForm">
+                <p:dialog id="tokenDialog" header="Token" fitViewport="true" widgetVar="tokenDialog" resizable="false"
+                    closeOnEscape="true" position="center top" style="margin-top:100px;">
+                    <p:outputPanel id="newTokenDialog" style="text-align:center; z-index:10000;">
+                        <p:panelGrid columns="2" columnClasses="label,value">
+                            <p:panelGrid columns="2" style="width: 500px;">
+                                <h:outputText value="Id" style="width: 300px;" />
+                                <p:inputText id="nwTokenIdField" value="#{manager.tokenEdit.tokenId}"
+                                    style="width: 300px;" />
+                                <h:outputText value="Value" style="width: 300px;" />
+                                <p:inputText id="nwTokenField" value="#{manager.tokenEdit.value}" style="width: 300px;" />
+                                <p:commandButton value="Save" action="#{manager.addNewToken}"
+                                    oncomplete="PF('tokenDialog').hide()"
+                                    update=":msgForm:messages,:mytabs:tokensGridForm" style="margin: 5px;" />
+                            </p:panelGrid>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </p:dialog>
+            </h:form>
+
+            <h:form id="tokensGridForm">
+                <p:dataTable id="tokensGrid" var="token" value="#{manager.tokens}" lazy="true" rows="25"
+                    rowsPerPageTemplate="10,25,50,100" paginator="true" paginatorPosition="bottom">
+                    <p:column headerText="Id" sortBy="#{token.tokenId}" width="90">
+                        <h:outputText value="#{token.tokenId}" />
+                    </p:column>
+                    <p:column headerText="Value" sortBy="#{token.value}">
+                        <h:outputText value="#{token.value}" />
+                    </p:column>
+                    <p:column headerText="Actions" width="120">
+                        <p:commandLink action="#{manager.searchItemDefinitions}"
+                            update=":mytabs:searchDefForm,:mytabs:defsGridForm" oncomplete="PF('mytabs').select(1)"
+                            style="margin: 5px;">
+                            <f:setPropertyActionListener target="#{manager.defItem.tokenId}" value="#{token.tokenId}" />
+                            <h:graphicImage value="images/search.png" width="22" height="22" />
+                        </p:commandLink>
+                        <p:commandLink action="#{manager.editToken}" update=":mytabs:tokenDialogForm"
+                            oncomplete="PF('tokenDialog').show()" style="margin: 5px;" rendered="false">
+                            <f:setPropertyActionListener target="#{manager.tokenEdit}" value="#{token}" />
+                            <h:graphicImage value="images/edit.png" width="22" height="22" />
+                        </p:commandLink>
+                        <p:commandLink action="#{manager.deleteToken}" update="@form" style="margin: 5px;">
+                            <f:setPropertyActionListener target="#{manager.tokenEdit}" value="#{token}" />
+                            <h:graphicImage value="images/delete.png" width="22" height="22" />
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:tab>
+
+        <p:tab title="Definitions">
+
+            <h:form id="searchDefForm">
+                <p:panelGrid columns="2" id="defPanel">
+                    <h:outputText value="Id" style="width: 300px;" />
+                    <p:inputText id="defIdField" value="#{manager.defSearch.defId}" style="width: 300px;" />
+                    <h:outputText value="TokenId" style="width: 300px;" />
+                    <p:inputText id="defTokenIdField" value="#{manager.defSearch.token.tokenId}" style="width: 300px;" />
+                    <h:outputText value="ParentId" style="width: 300px;" />
+                    <p:inputText id="defParentIdField" value="#{manager.defSearch.parentId}" style="width: 300px;" />
+                    <h:outputText value="Token" style="width: 300px;" />
+                    <p:inputText id="defTokenField" value="#{manager.defSearch.token.value}" style="width: 300px;" />
+                    <h:outputText value="Type" style="width: 300px;" />
+                    <p:inputText id="defTypeField" value="#{manager.defSearch.type}" style="width: 300px;" />
+                    <h:outputText value="Group" style="width: 300px;" />
+                    <p:inputText id="defGrpField" value="#{manager.defSearch.group}" style="width: 300px;" />
+                    <h:outputText value="Value" style="width: 300px;" />
+                    <p:inputText id="defValueField" value="#{manager.defSearch.value}" style="width: 300px;" />
+                    <h:outputText value="Mask" style="width: 300px;" />
+                    <p:panel style="width: 300px; margin: 0px; padding: 0px; border-width: 0px;">
+                        <h:outputText value="Not" />
+                        <h:selectBooleanCheckbox id="defNotMaskField" value="#{manager.defSearch.maskNot}" />
+                        <p:selectManyMenu id="maskLangsField" value="#{manager.defSearch.requiredLangs}"
+                            converter="org.cosmodict.web.LangConverter" var="lang" filter="false"
+                            filterMatchMode="contains" style="width: 300px;">
+                            <f:selectItems value="#{manager.langs.target}" var="lang" itemValue="#{lang}"
+                                itemLabel="#{lang.name}" />
+                            <p:column width="10%">
+                                <h:outputText value="#{lang.langId}" />
+                            </p:column>
+                            <p:column width="40%">
+                                <h:outputText value="#{lang.name}" />
+                            </p:column>
+                            <p:column width="40%">
+                                <h:outputText value="#{lang.original}" />
+                            </p:column>
+                        </p:selectManyMenu>
+                    </p:panel>
+                    <h:outputText value="Ord" style="width: 300px;" />
+                    <p:inputText id="defOrdField" value="#{manager.defSearch.ordinal}" style="width: 300px;" />
+                    <h:outputText value="" style="width: 300px;" />
+                    <p:panel style="border-width: 0px;">
+                        <p:commandLink action="#{manager.searchDefinitions}" update=":mytabs:defsGridForm"
+                            style="width: 100px; margin: 5px;">
+                            <h:graphicImage value="images/search.png" width="22" height="22" />
+                        </p:commandLink>
+                        <p:commandButton action="#{manager.saveDefSearch}" update=":mytabs:searchesDialogForm"
+                            value="Save" style="margin: 5px;" />
+                        <p:commandButton oncomplete="PF('searchesDialog').show()" update=":mytabs:searchesDialogForm"
+                            value="Searches" style="margin: 5px;" />
+                        <p:commandButton oncomplete="PF('defDialog').show()" value="New" update=":mytabs:defDialogForm"
+                            style="margin: 5px;">
+                            <f:setPropertyActionListener target="#{manager.defEdit}" value="#{null}" />
+                        </p:commandButton>
+                        <p:commandButton value="Reset" style="margin: 5px;" update="@form:defPanel">
+                            <f:setPropertyActionListener target="#{manager.defSearch}" value="#{null}" />
+                        </p:commandButton>
+                    </p:panel>
+                </p:panelGrid>
+            </h:form>
+
+            <h:form id="defDialogForm">
+                <p:dialog id="defDialog" header="Definition" widgetVar="defDialog" showEffect="fade" hideEffect="fade"
+                    resizable="false" closeOnEscape="true" position="center top" style="margin-top:100px;">
+                    <p:outputPanel id="newDefDialog" style="text-align:center;">
+                        <p:panelGrid columns="2" columnClasses="label,value">
+                            <p:panelGrid columns="2" style="width: 1024px;">
+                                <h:outputText value="Id" style="width: 300px;" />
+                                <p:inputText id="nwDefIdField" value="#{manager.defEdit.defId}" style="width: 700px;" />
+                                <h:outputText value="TokenId" style="width: 300px;" />
+                                <p:inputText id="nwDefTokenIdField" value="#{manager.defEdit.token.tokenId}"
+                                    style="width: 700px;" />
+                                <h:outputText value="ParentId" style="width: 300px;" />
+                                <p:inputText id="nwDefParentIdField" value="#{manager.defEdit.parentId}"
+                                    style="width: 700px;" />
+                                <h:outputText value="Type" style="width: 300px;" />
+                                <p:inputText id="nwDefTypeField" value="#{manager.defEdit.type}" style="width: 700px;" />
+                                <h:outputText value="Group" style="width: 300px;" />
+                                <p:inputText id="nwDefGrpField" value="#{manager.defEdit.group}" style="width: 700px;" />
+                                <h:outputText value="Value" style="width: 300px;" />
+                                <p:inputText id="nwDefValueField" value="#{manager.defEdit.value}" style="width: 700px;" />
+                                <h:outputText value="Ord" style="width: 300px;" />
+                                <p:inputText id="nwOrdField" value="#{manager.defEdit.ordinal}" style="width: 700px;" />
+                                <p:commandButton value="Save" action="#{manager.addNewDefinition}"
+                                    oncomplete="PF('defDialog').hide()" update=":msgForm:messages,:mytabs:defsGridForm"
+                                    style="margin: 5px;" />
+                            </p:panelGrid>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </p:dialog>
+            </h:form>
+
+            <h:form id="defsGridForm">
+                <p:dataTable id="defsGrid" var="def" value="#{manager.definitions}" lazy="true" rows="25"
+                    sortMode="multiple" rowsPerPageTemplate="10,25,50,100" paginator="true" paginatorPosition="bottom">
+                    <p:column headerText="Id" sortBy="#{def.defId}" width="90">
+                        <h:outputText value="#{def.defId}" />
+                    </p:column>
+                    <p:column headerText="ParentId" sortBy="#{def.defId}" width="90">
+                        <h:outputText value="#{def.parentId}" />
+                    </p:column>
+                    <p:column headerText="TokenId" sortBy="#{def.token.tokenId}" width="90">
+                        <h:outputText value="#{def.token.tokenId}" />
+                    </p:column>
+                    <p:column headerText="Token" sortBy="#{def.token.value}" width="150">
+                        <h:outputText value="#{def.token.value}" />
+                    </p:column>
+                    <p:column headerText="Type" sortBy="#{def.type}" width="150">
+                        <h:outputText value="#{def.type}" />
+                    </p:column>
+                    <p:column headerText="Group" sortBy="#{def.group}" width="150">
+                        <h:outputText value="#{def.group}" />
+                    </p:column>
+                    <p:column headerText="Value" sortBy="#{def.value}">
+                        <h:outputText value="#{def.value}" />
+                    </p:column>
+                    <p:column headerText="Mask" sortBy="#{def.mask}" width="90">
+                        <h:outputText value="#{manager.maskLangs(def)}" style="font-size: 8px;" />
+                    </p:column>
+                    <p:column headerText="Ord" sortBy="#{def.ordinal}" width="90">
+                        <h:outputText value="#{def.ordinal}" style="font-size: 8px;" />
+                    </p:column>
+                    <p:column headerText="Actions" width="120">
+                        <p:commandLink action="#{manager.searchDefinitionTranslations}"
+                            update=":mytabs:searchTranslationForm" oncomplete="PF('mytabs').select(2)">
+                            <f:setPropertyActionListener target="#{manager.trItem.defId}" value="#{def.defId}" />
+                            <h:graphicImage value="images/search.png" width="22" height="22" />
+                        </p:commandLink>
+                        <p:commandLink action="#{manager.editDefinition}" update=":mytabs:defDialogForm"
+                            oncomplete="PF('defDialog').show()">
+                            <f:setPropertyActionListener target="#{manager.defEdit}" value="#{def}" />
+                            <h:graphicImage value="images/edit.png" width="22" height="22" />
+                        </p:commandLink>
+                        <p:commandLink action="#{manager.deleteDefinition}" update="@form">
+                            <f:setPropertyActionListener target="#{manager.defEdit}" value="#{def}" />
+                            <h:graphicImage value="images/delete.png" width="22" height="22" />
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="searchesDialogForm">
+                <p:dialog id="searchesDialog" header="Searches" widgetVar="searchesDialog" showEffect="fade"
+                    hideEffect="fade" resizable="false" closeOnEscape="true" position="center top"
+                    style="margin-top:100px;">
+                    <p:outputPanel id="searchesDialogPanel" style="text-align:center;">
+                        <p:dataTable id="searchesGrid" var="def" value="#{manager.searches}" rows="100" paginator="true"
+                            paginatorPosition="bottom">
+                            <p:column headerText="Id" width="90">
+                                <h:outputText value="#{def.defId}" />
+                            </p:column>
+                            <p:column headerText="ParentId" width="90">
+                                <h:outputText value="#{def.parentId}" />
+                            </p:column>
+                            <p:column headerText="TokenId" width="90">
+                                <h:outputText value="#{def.token.tokenId}" />
+                            </p:column>
+                            <p:column headerText="Token">
+                                <h:outputText value="#{def.token.value}" />
+                            </p:column>
+                            <p:column headerText="Type">
+                                <h:outputText value="#{def.type}" />
+                            </p:column>
+                            <p:column headerText="Group">
+                                <h:outputText value="#{def.group}" />
+                            </p:column>
+                            <p:column headerText="Value">
+                                <h:outputText value="#{def.value}" />
+                            </p:column>
+                            <p:column headerText="Mask">
+                                <h:outputText value="#{def.maskNot? '~':''}" />
+                                <h:outputText value="#{manager.maskLangs(def)}" />
+                            </p:column>
+                            <p:column headerText="Actions">
+                                <p:commandLink action="#{manager.selectSearch}"
+                                    update=":mytabs:searchDefForm,:mytabs:defsGridForm,@form:searchesDialog">
+                                    <f:setPropertyActionListener target="#{manager.defItem}" value="#{def}" />
+                                    <h:graphicImage value="images/select.png" width="22" height="22" />
+                                </p:commandLink>
+                                <p:commandLink action="#{manager.searchItemDefinitions}"
+                                    update=":mytabs:searchDefForm,:mytabs:defsGridForm">
+                                    <f:setPropertyActionListener target="#{manager.defItem.group}" value="#{def.group}" />
+                                    <h:graphicImage value="images/group.png" width="22" height="22" />
+                                </p:commandLink>
+                                <p:commandLink action="#{manager.deleteSearch}" update="@form:searchesDialog">
+                                    <f:setPropertyActionListener target="#{manager.defItem}" value="#{def}" />
+                                    <h:graphicImage value="images/delete.png" width="22" height="22" />
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </p:outputPanel>
+                </p:dialog>
+            </h:form>
+
+        </p:tab>
+
+        <p:tab title="Translations">
+            <h:form id="searchTranslationForm">
+                <p:panelGrid columns="2" id="trPanel">
+                    <h:outputText value="Id" style="width: 300px;" />
+                    <p:inputText id="translationIdField" value="#{manager.trSearch.trId}" style="width: 300px;" />
+                    <h:outputText value="Lang" style="width: 300px;" />
+                    <p:selectOneMenu id="advanced" value="#{manager.trSearch.lang}" editable="true"
+                        converter="org.cosmodict.web.LangConverter" var="lang" filter="true" filterMatchMode="contains"
+                        style="width: 300px;">
+                        <f:selectItems value="#{manager.langs.source}" var="lang" itemValue="#{lang}"
+                            itemLabel="#{lang.name}" />
+                        <p:column width="10%">
+                            <h:outputText value="#{lang.langId}" />
+                        </p:column>
+                        <p:column width="40%">
+                            <h:outputText value="#{lang.name}" />
+                        </p:column>
+                        <p:column width="40%">
+                            <h:outputText value="#{lang.original}" />
+                        </p:column>
+                    </p:selectOneMenu>
+                    <h:outputText value="DefId" style="width: 300px;" />
+                    <p:inputText id="translationDefIdField" value="#{manager.trSearch.defId}" style="width: 300px;" />
+                    <h:outputText value="Value" style="width: 300px;" />
+                    <p:inputText id="translationValueField" value="#{manager.trSearch.value}" style="width: 300px;" />
+                    <h:outputText value="Gender(s) Type" style="width: 300px;" />
+                    <p:inputText id="translationGenderField" value="#{manager.trSearch.gender}" style="width: 300px;" />
+                    <h:outputText value="Gender(s) Value" style="width: 300px;" />
+                    <p:inputText id="translationGenderValueField" value="#{manager.trSearch.genderValue}"
+                        style="width: 300px;" />
+                    <h:outputText value="Pronunciation" style="width: 300px;" />
+                    <p:inputText id="translationPrnField" value="#{manager.trSearch.pronunciation}"
+                        style="width: 300px;" />
+                    <h:outputText value="" style="width: 300px;" />
+                    <p:panel style="border-width: 0px;">
+                        <p:commandLink action="#{manager.searchTranslations}" update=":mytabs:translationsGridForm"
+                            style="width: 100px; margin: 5px;">
+                            <h:graphicImage value="images/search.png" width="22" height="22" />
+                        </p:commandLink>
+                        <p:commandButton oncomplete="PF('translationDialog').show()" value="New"
+                            update=":mytabs:translationDialogForm" style="margin: 5px;">
+                            <f:setPropertyActionListener target="#{manager.trEdit}" value="#{null}" />
+                        </p:commandButton>
+                        <p:commandButton value="Reset" style="margin: 5px;" update="@form:trPanel">
+                            <f:setPropertyActionListener target="#{manager.trSearch}" value="#{null}" />
+                        </p:commandButton>
+                    </p:panel>
+                </p:panelGrid>
+            </h:form>
+
+            <h:form id="translationsGridForm">
+                <p:dataTable id="translationsGrid" var="translation" lazy="true" value="#{manager.translations}"
+                    sortMode="multiple" rows="25" rowsPerPageTemplate="10,25,50,100" paginator="true"
+                    paginatorPosition="bottom">
+                    <p:column headerText="Id" sortBy="#{translation.trId}" width="90">
+                        <h:outputText value="#{translation.trId}" />
+                    </p:column>
+                    <p:column headerText="DefId" sortBy="#{translation.defId}" width="90">
+                        <h:outputText value="#{translation.defId}" />
+                    </p:column>
+                    <p:column headerText="Lang" sortBy="#{translation.langId}" width="90">
+                        <h:outputText value="#{translation.langId}" />
+                    </p:column>
+                    <p:column headerText="Gender Type" sortBy="#{translation.gender}" width="90">
+                        <h:outputText value="#{translation.gender}" />
+                    </p:column>
+                    <p:column headerText="Gender Value" sortBy="#{translation.genderValue}" width="120">
+                        <h:outputText value="#{translation.genderValue}" width="120" />
+                    </p:column>
+                    <p:column headerText="Value">
+                        <h:outputText value="#{translation.value}" />
+                    </p:column>
+                    <p:column headerText="Pronunciation">
+                        <h:outputText value="#{translation.pronunciation}" />
+                    </p:column>
+                    <p:column headerText="Actions" width="120">
+                        <p:commandLink action="#{manager.editTranslation}" update=":mytabs:translationDialogForm"
+                            oncomplete="PF('translationDialog').show()">
+                            <f:setPropertyActionListener target="#{manager.trEdit}" value="#{translation}" />
+                            <h:graphicImage value="images/edit.png" width="22" height="22" />
+                        </p:commandLink>
+                        <p:commandLink action="#{manager.deleteTranslation}" update="@form">
+                            <f:setPropertyActionListener target="#{manager.trEdit}" value="#{translation}" />
+                            <h:graphicImage value="images/delete.png" width="22" height="22" />
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="translationDialogForm">
+                <p:dialog id="translationDialog" header="Translation" fitViewport="true" widgetVar="translationDialog"
+                    showEffect="fade" hideEffect="fade" resizable="false" closeOnEscape="true" position="center top"
+                    style="margin-top:100px;">
+                    <p:outputPanel id="newTranslationDialog" style="text-align:center;">
+                        <p:panelGrid columns="2" columnClasses="label,value">
+                            <p:panelGrid columns="2" style="width: 1024px;">
+                                <h:outputText value="Id" style="width: 150px;" />
+                                <p:inputText id="nwTranslationIdField" value="#{manager.trEdit.trId}"
+                                    style="width: 900px;" />
+                                <h:outputText value="DefId" style="width: 150px;" />
+                                <p:inputText id="nwTranslationDefIdField" value="#{manager.trEdit.defId}"
+                                    style="width: 900px;" />
+                                <h:outputText value="Lang" style="width: 150px;" />
+                                <p:inputText id="nwTranslationLangIdField" value="#{manager.trEdit.langId}"
+                                    style="width: 900px;" />
+                                <h:outputText value="Gender Type" style="width: 150px;" />
+                                <p:inputText id="nwTranslationGenderField" value="#{manager.trEdit.gender}"
+                                    style="width: 900px;" />
+                                <h:outputText value="Gender Value" style="width: 150px;" />
+                                <p:inputText id="nwTranslationGenderValueField" value="#{manager.trEdit.genderValue}"
+                                    style="width: 900px;" />
+                                <h:outputText value="Value" style="width: 150px;" />
+                                <p:inputText id="nwTranslationValueField" value="#{manager.trEdit.value}"
+                                    style="width: 900px;" />
+                                <h:outputText value="Pronunciation" style="width: 150px;" />
+                                <p:inputText id="nwTranslationPrnField" value="#{manager.trEdit.pronunciation}"
+                                    style="width: 900px;" />
+                                <p:commandButton value="Save" action="#{manager.addNewTranslation}"
+                                    oncomplete="PF('translationDialog').hide()"
+                                    update=":msgForm:messages,:mytabs:translationsGridForm" style="margin: 5px;" />
+                            </p:panelGrid>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </p:dialog>
+            </h:form>
+        </p:tab>
+
+        <p:tab id="langs" title="Langs">
+            <h:form id="langsForm">
+                <p:pickList id="langsList" value="#{manager.langs}" var="lang" itemValue="#{lang}"
+                    itemLabel="#{lang.name}" showSourceFilter="true" showTargetFilter="true" showSourceControls="false"
+                    showTargetControls="true" filterMatchMode="contains" converter="org.cosmodict.web.LangConverter">
+
+                    <f:facet name="sourceCaption">Available</f:facet>
+                    <f:facet name="targetCaption">Selected</f:facet>
+
+                    <p:column width="10%">
+                        <h:outputText value="#{lang.langId}" />
+                    </p:column>
+                    <p:column width="40%">
+                        <h:outputText value="#{lang.name}" />
+                    </p:column>
+                    <p:column width="40%">
+                        <h:outputText value="#{lang.original}" />
+                    </p:column>
+                </p:pickList>
+                <p:commandButton action="#{manager.configureLangs}" update="@form" value="Save" style="margin: 5px;" />
+            </h:form>
+        </p:tab>
+    </p:tabView>
+</h:body>
+</html>

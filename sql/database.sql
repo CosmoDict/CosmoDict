@@ -1,0 +1,242 @@
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
+
+SHOW WARNINGS;
+DROP SCHEMA IF EXISTS `stage1` ;
+CREATE SCHEMA IF NOT EXISTS `stage1` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin ;
+SHOW WARNINGS;
+DROP SCHEMA IF EXISTS `stage0` ;
+CREATE SCHEMA IF NOT EXISTS `stage0` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin ;
+SHOW WARNINGS;
+USE `stage1` ;
+
+-- -----------------------------------------------------
+-- Table `TOKEN`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `TOKEN` ;
+
+SHOW WARNINGS;
+CREATE  TABLE IF NOT EXISTS `TOKEN` (
+  `token_id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `value` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  PRIMARY KEY (`token_id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+SHOW WARNINGS;
+CREATE UNIQUE INDEX `value_UNIQUE` ON `TOKEN` (`value` ASC) ;
+
+SHOW WARNINGS;
+
+-- -----------------------------------------------------
+-- Table `DEFINITION`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `DEFINITION` ;
+
+SHOW WARNINGS;
+CREATE  TABLE IF NOT EXISTS `DEFINITION` (
+  `def_id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `token_id` INT NOT NULL ,
+  `parent_id` INT NULL ,
+  `type` VARCHAR(255) NULL ,
+  `grp` VARCHAR(16) NULL ,
+  `value` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  PRIMARY KEY (`def_id`) ,
+  CONSTRAINT `fk_DEFINITION_TOKEN`
+    FOREIGN KEY (`token_id` )
+    REFERENCES `TOKEN` (`token_id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_DEFINITION_DEFINITION`
+    FOREIGN KEY (`parent_id` )
+    REFERENCES `DEFINITION` (`def_id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+SHOW WARNINGS;
+CREATE INDEX `fk_DEFINITION_TOKEN` ON `DEFINITION` (`token_id` ASC) ;
+
+SHOW WARNINGS;
+CREATE INDEX `fk_DEFINITION_DEFINITION` ON `DEFINITION` (`parent_id` ASC) ;
+
+SHOW WARNINGS;
+
+-- -----------------------------------------------------
+-- Table `LANG`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `LANG` ;
+
+SHOW WARNINGS;
+CREATE  TABLE IF NOT EXISTS `LANG` (
+  `lang_id` VARCHAR(16) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `name` VARCHAR(128) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `original` VARCHAR(128) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  PRIMARY KEY (`lang_id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+SHOW WARNINGS;
+
+-- -----------------------------------------------------
+-- Table `TRANSLATION`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `TRANSLATION` ;
+
+SHOW WARNINGS;
+CREATE  TABLE IF NOT EXISTS `TRANSLATION` (
+  `tr_id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `lang_id` VARCHAR(16) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `def_id` INT NOT NULL ,
+  `value` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL ,
+  `pronunciation` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  `gender` VARCHAR(32) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  `gender_value` VARCHAR(64) NULL ,
+  PRIMARY KEY (`tr_id`) ,
+  CONSTRAINT `fk_TRANSLATION_DEFINITION`
+    FOREIGN KEY (`def_id` )
+    REFERENCES `DEFINITION` (`def_id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_TRANSLATION_LANG`
+    FOREIGN KEY (`lang_id` )
+    REFERENCES `LANG` (`lang_id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+SHOW WARNINGS;
+CREATE INDEX `fk_TRANSLATION_LOCALE` ON `TRANSLATION` (`lang_id` ASC) ;
+
+SHOW WARNINGS;
+CREATE INDEX `fk_TRANSLATION_DEFINITION` ON `TRANSLATION` (`def_id` ASC) ;
+
+SHOW WARNINGS;
+USE `stage0` ;
+
+-- -----------------------------------------------------
+-- Table `TOKEN`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `TOKEN` ;
+
+SHOW WARNINGS;
+CREATE  TABLE IF NOT EXISTS `TOKEN` (
+  `token_id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `value` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  PRIMARY KEY (`token_id`) )
+ENGINE = InnoDB
+AUTO_INCREMENT = 10212
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+SHOW WARNINGS;
+CREATE UNIQUE INDEX `value_UNIQUE` ON `TOKEN` (`value` ASC) ;
+
+SHOW WARNINGS;
+
+-- -----------------------------------------------------
+-- Table `DEFINITION`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `DEFINITION` ;
+
+SHOW WARNINGS;
+CREATE  TABLE IF NOT EXISTS `DEFINITION` (
+  `def_id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `token_id` INT(11) NOT NULL ,
+  `parent_id` INT(11) NULL DEFAULT NULL ,
+  `type` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  `grp` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  `value` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `mask` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  `ord` INT(11) NULL DEFAULT NULL ,
+  PRIMARY KEY (`def_id`) ,
+  CONSTRAINT `fk_DEFINITION_DEFINITION`
+    FOREIGN KEY (`parent_id` )
+    REFERENCES `DEFINITION` (`def_id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_DEFINITION_TOKEN`
+    FOREIGN KEY (`token_id` )
+    REFERENCES `TOKEN` (`token_id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 33020
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+SHOW WARNINGS;
+CREATE INDEX `fk_DEFINITION_TOKEN` ON `DEFINITION` (`token_id` ASC) ;
+
+SHOW WARNINGS;
+CREATE INDEX `fk_DEFINITION_DEFINITION` ON `DEFINITION` (`parent_id` ASC) ;
+
+SHOW WARNINGS;
+
+-- -----------------------------------------------------
+-- Table `LANG`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `LANG` ;
+
+SHOW WARNINGS;
+CREATE  TABLE IF NOT EXISTS `LANG` (
+  `lang_id` VARCHAR(16) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `name` VARCHAR(128) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  `original` VARCHAR(128) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  `priority` INT(11) NOT NULL ,
+  PRIMARY KEY (`lang_id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+SHOW WARNINGS;
+
+-- -----------------------------------------------------
+-- Table `TRANSLATION`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `TRANSLATION` ;
+
+SHOW WARNINGS;
+CREATE  TABLE IF NOT EXISTS `TRANSLATION` (
+  `tr_id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `lang_id` VARCHAR(16) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `def_id` INT(11) NOT NULL ,
+  `gender` VARCHAR(32) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  `gender_value` VARCHAR(64) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  `value` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  `pronunciation` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  PRIMARY KEY (`tr_id`) ,
+  CONSTRAINT `fk_TRANSLATION_DEFINITION`
+    FOREIGN KEY (`def_id` )
+    REFERENCES `DEFINITION` (`def_id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_TRANSLATION_LANG`
+    FOREIGN KEY (`lang_id` )
+    REFERENCES `LANG` (`lang_id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 739209
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+SHOW WARNINGS;
+CREATE INDEX `fk_TRANSLATION_LOCALE` ON `TRANSLATION` (`lang_id` ASC) ;
+
+SHOW WARNINGS;
+CREATE INDEX `fk_TRANSLATION_DEFINITION` ON `TRANSLATION` (`def_id` ASC) ;
+
+SHOW WARNINGS;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

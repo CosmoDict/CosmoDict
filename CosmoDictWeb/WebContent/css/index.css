@@ -1,0 +1,20 @@
+.ui-picklist .ui-picklist-filter {
+	padding-right: 15px;
+	width: 100%;
+}
+
+.ui-picklist .ui-picklist-list {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: auto;
+	height: 200px;
+	width: 99%;
+}
+
+.ui-panel .ui-panel-content {
+	border: 0;
+	background: none;
+	padding: 0px;
+}
+}
